@@ -5,6 +5,7 @@ import { supabase } from './lib/supabase';
 import { AuthForm } from './features/auth/AuthForm';
 import { saveAttempt, getAttempts } from './features/statistics/attempts';
 import { TypingGame } from './features/game/TypingGame';
+import MagentaCanvas from './features/canvas/canvas';
 
 
 function App() {
@@ -79,6 +80,7 @@ function App() {
       <p>Вы вошли как: {session.user.email}</p>
       <button onClick={handleSignOut}>Выйти</button>
       <TypingGame />
+      <MagentaCanvas />
       <button
         onClick={async () => {
           try {
