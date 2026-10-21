@@ -42,9 +42,6 @@ export default function MagentaCanvas() {
         })
     }
 
-    
-
-    
     const handleClick = () => {
         setSpeedPerSecond((prev) => prev + 0.5 )
         setQtyStart((prev) => prev + 50)
@@ -57,12 +54,14 @@ export default function MagentaCanvas() {
     }
 
 
-
     useEffect(() => {
         speedRef.current = speedPerSecond;
     }, [speedPerSecond]);
 
     useEffect(() => {
+        let animationFrameId: number;
+        let lastTimestamp = 0;
+
         const canvas = canvasRef.current;
         if (!canvas) return;
 
@@ -73,11 +72,6 @@ export default function MagentaCanvas() {
         canvas.height = window.innerHeight;
 
 
-        let animationFrameId: number;
-        let lastTimestamp= 0;
-
-
-        
         const render = (timestamp: number) => {
             // Очищаем холст перед каждым новым кадром
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -113,7 +107,7 @@ export default function MagentaCanvas() {
 
                     coord.alpha = 0;
                 }
-                // Двиэение звёзд по координатам.
+                // Движение звёзд по координатам.
                 coord.y += speedRef.current * deltaTime * coord.velocityY; 
                 coord.x += speedRef.current * deltaTime * coord.velocityX;
             });
