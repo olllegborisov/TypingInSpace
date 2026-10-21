@@ -79,7 +79,7 @@ export default function MagentaCanvas() {
                     coord.x -= speedRef.current * deltaTime;  // Скорость движения (можно менять)
                 }
                 if (coord.y > window.innerHeight ) {
-                    coord.y = Math.floor(Math.random() * window.innerHeight)
+                    coord.y = Math.floor((Math.random() * window.innerHeight) - 500)
                     coord.x = Math.floor(Math.random() * window.innerWidth)
                 }
                 coord.y += speedRef.current * deltaTime;  // Скорость движения (можно менять)
