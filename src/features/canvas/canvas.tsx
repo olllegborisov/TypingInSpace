@@ -16,7 +16,8 @@ interface coords {
 
 export default function MagentaCanvas() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    let [speedPerSecond, setSpeedPerSecond] = useState(0.5)
+    let [speedPerSecond, setSpeedPerSecond] = useState(0.5);
+    let [qtyStars, setQtyStart] = useState(500)
     const speedRef = useRef(speedPerSecond);
 
     let coords: coords[] = []
@@ -26,7 +27,7 @@ export default function MagentaCanvas() {
 
     
 
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < qtyStars; i++) {
         let randomX: number = Math.floor(Math.random() * window.innerWidth)
         let randomY: number = Math.floor(Math.random() * window.innerHeight)
         let sourceX: number = randomX;
@@ -38,12 +39,17 @@ export default function MagentaCanvas() {
     }
 
     
+
+    
     const handleClick = () => {
-        setSpeedPerSecond((prev) => prev + 0.01 )
+        setSpeedPerSecond((prev) => prev + 0.5 )
+        setQtyStart((prev) => prev + 50)
+        
     }   
     
     const handleClickReduce = () => {
-        setSpeedPerSecond((prev) => Math.max(0, prev -  0.01))
+        setSpeedPerSecond((prev) => Math.max(0, prev -  0.5))
+        setQtyStart((prev) => prev > 50 ? prev -  50 : prev)
     }   
 
 
