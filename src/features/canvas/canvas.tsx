@@ -6,41 +6,44 @@ interface coords {
     y: number;
     velocityX: number;
     velocityY: number;
-    // radius: number;     // Разный размер для глубины
-    // alpha: number;      // Плавное появление (эффект мерцания)
+    radius: number;     // Разный размер для глубины
+    sourceX: number;
+    sourceY: number;
+    alpha: number;      // Плавное появление (эффект мерцания)
     // active: boolean;    // Задержка появления
     // spawnDelay: number; // Сколько кадров ждать до появления
 }
 
 export default function MagentaCanvas() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    let [speedPerSecond, setSpeedPerSecond] = useState(1)
+    let [speedPerSecond, setSpeedPerSecond] = useState(0.5)
     const speedRef = useRef(speedPerSecond);
 
     let coords: coords[] = []
     
-    const min = -50;
-    const max = 50 ;
     const windowWidth = window.innerWidth;
-    console.log(windowWidth);
-    console.log(window.innerWidth);
+
+
     
 
-    for (let i = 0; i < 2000; i++) {
+    for (let i = 0; i < 500; i++) {
         let randomX: number = Math.floor(Math.random() * window.innerWidth)
         let randomY: number = Math.floor(Math.random() * window.innerHeight)
-        let randomVelocityX: number = Math.floor(Math.random() * (max - min + 1)) + min;
-        let randomVelocityY: number = Math.floor(Math.random() * (max - min + 1)) + min;
-        coords.push({x: randomX, y: randomY, velocityX: randomVelocityX, velocityY: randomVelocityY})
+        let sourceX: number = randomX;
+        let sourceY: number = randomY;
+        let randomVelocityX: number =  randomX - (window.innerWidth / 2);
+        let randomVelocityY: number = randomY -  (window.innerHeight / 2);
+        let alpha: number = 0;
+        coords.push({x: randomX, y: randomY, velocityX: randomVelocityX, velocityY: randomVelocityY, radius: Math.random() * 1.5, sourceX: sourceX, sourceY: sourceY, alpha: alpha})
     }
 
     
     const handleClick = () => {
-        setSpeedPerSecond((prev) => prev + 50 )
+        setSpeedPerSecond((prev) => prev + 0.01 )
     }   
     
     const handleClickReduce = () => {
-        setSpeedPerSecond((prev) => Math.max(0, prev - 50))
+        setSpeedPerSecond((prev) => Math.max(0, prev -  0.01))
     }   
 
 
@@ -62,15 +65,6 @@ export default function MagentaCanvas() {
 
         let animationFrameId: number;
         let lastTimestamp= 0;
-        
-        // const intervalId = setInterval(() => {
-        //     coords.forEach(coord => {
-        //         coord.x = Math.floor(Math.random() * window.innerWidth)
-        //         coord.y = Math.floor(Math.random() * window.innerHeight)
-
-        //     })
-
-        // }, 2000)
 
 
         
@@ -84,21 +78,25 @@ export default function MagentaCanvas() {
             // 2. Рисуем прямоугольник
             ctx.fillStyle = 'white';
             console.log(ctx);
-            
+   
             
             coords.forEach(coord => {
                 // Рисуем звезды
+                coord.alpha = Math.min(1, coord.alpha + deltaTime * 10);
                 ctx.beginPath();
-                ctx.arc(coord.x, coord.y, 1, 0, Math.PI * 2);
+                ctx.arc(coord.x, coord.y, coord.radius, 0, Math.PI * 2);
+                ctx.globalAlpha = coord.alpha;
                 ctx.fill();
-                if (coord.y > windowWidth || coord.x > windowWidth || coord.y < -(window.innerWidth - window.innerHeight) || coord.x < 0) {
-                    coord.y = (window.innerHeight / 2)
-                    coord.x =  (window.innerWidth / 2)
+
+                if (coord.y > window.innerHeight || coord.x > windowWidth || coord.y < 0 || coord.x < 0) {
+                    coord.y =  coord.sourceY ;
+                    coord.x =   coord.sourceX;
+                    coord.alpha = 0;
                 }
-                coord.y += speedRef.current * deltaTime * coord.velocityY;  // Скорость движения (можно менять)
-                coord.x -= speedRef.current * deltaTime * coord.velocityX;  // Скорость движения (можно менять)
-                
+                coord.y += speedRef.current * deltaTime * coord.velocityY; 
+                coord.x += speedRef.current * deltaTime * coord.velocityX;
             });
+            ctx.globalAlpha = 1;
 
             
             
