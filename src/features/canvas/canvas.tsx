@@ -22,11 +22,6 @@ export default function MagentaCanvas() {
 
     let coords: coords[] = []
     
-    const windowWidth = window.innerWidth;
-
-
-    
-
     for (let i = 0; i < qtyStars; i++) {
         let randomX: number = Math.floor(Math.random() * window.innerWidth)
         let randomY: number = Math.floor(Math.random() * window.innerHeight)
@@ -35,7 +30,16 @@ export default function MagentaCanvas() {
         let randomVelocityX: number =  randomX - (window.innerWidth / 2);
         let randomVelocityY: number = randomY -  (window.innerHeight / 2);
         let alpha: number = 0;
-        coords.push({x: randomX, y: randomY, velocityX: randomVelocityX, velocityY: randomVelocityY, radius: Math.random() * 1.5, sourceX: sourceX, sourceY: sourceY, alpha: alpha})
+        coords.push({
+            x: randomX, 
+            y: randomY, 
+            velocityX: randomVelocityX, 
+            velocityY: randomVelocityY, 
+            radius: Math.random() * 1.5, 
+            sourceX: sourceX, 
+            sourceY: sourceY, 
+            alpha: alpha
+        })
     }
 
     
@@ -50,7 +54,7 @@ export default function MagentaCanvas() {
     const handleClickReduce = () => {
         setSpeedPerSecond((prev) => Math.max(0, prev -  0.5))
         setQtyStart((prev) => prev > 50 ? prev -  50 : prev)
-    }   
+    }
 
 
 
@@ -75,39 +79,48 @@ export default function MagentaCanvas() {
 
         
         const render = (timestamp: number) => {
-        // 1. Очищаем холст перед каждым новым кадром, чтобы фигура не «размазывалась»
+            // Очищаем холст перед каждым новым кадром
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             const deltaTime = (timestamp - lastTimestamp) / 1000;
             lastTimestamp = timestamp;
 
-            // 2. Рисуем прямоугольник
-            ctx.fillStyle = 'white';
-            console.log(ctx);
-   
             
             coords.forEach(coord => {
                 // Рисуем звезды
                 coord.alpha = Math.min(1, coord.alpha + deltaTime * 10);
+                ctx.fillStyle = 'white';
                 ctx.beginPath();
                 ctx.arc(coord.x, coord.y, coord.radius, 0, Math.PI * 2);
                 ctx.globalAlpha = coord.alpha;
                 ctx.fill();
 
-                if (coord.y > window.innerHeight || coord.x > windowWidth || coord.y < 0 || coord.x < 0) {
-                    coord.y =  coord.sourceY ;
-                    coord.x =   coord.sourceX;
+                // Задаём координаты появления новых звёзд
+                if (
+                    coord.y > window.innerHeight ||
+                    coord.x > window.innerWidth ||
+                    coord.y < 0 ||
+                    coord.x < 0
+                ) {
+                    coord.x = Math.random() * window.innerWidth;
+                    coord.y = Math.random() * window.innerHeight;
+
+                    coord.sourceX = coord.x;
+                    coord.sourceY = coord.y;
+
+                    coord.velocityX = coord.x - window.innerWidth / 2;
+                    coord.velocityY = coord.y - window.innerHeight / 2;
+
                     coord.alpha = 0;
                 }
+                // Двиэение звёзд по координатам.
                 coord.y += speedRef.current * deltaTime * coord.velocityY; 
                 coord.x += speedRef.current * deltaTime * coord.velocityX;
             });
             ctx.globalAlpha = 1;
 
-            
-            
 
-            // 4. Запрашиваем следующий кадр анимации
+            // Запрашиваем следующий кадр анимации
             animationFrameId = requestAnimationFrame(render);
         };
 
@@ -117,7 +130,6 @@ export default function MagentaCanvas() {
 
         return () => {
             cancelAnimationFrame(animationFrameId);
-            // clearInterval(intervalId)
         };
     }, []);
 
