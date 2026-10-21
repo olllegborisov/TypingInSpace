@@ -1,18 +1,37 @@
 import { useEffect, useRef, useState } from 'react';
 
+
+interface coords {
+    x: number;
+    y: number;
+    velocityX: number;
+    velocityY: number;
+    // radius: number;     // Разный размер для глубины
+    // alpha: number;      // Плавное появление (эффект мерцания)
+    // active: boolean;    // Задержка появления
+    // spawnDelay: number; // Сколько кадров ждать до появления
+}
+
 export default function MagentaCanvas() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    let [speedPerSecond, setSpeedPerSecond] = useState(100)
+    let [speedPerSecond, setSpeedPerSecond] = useState(1)
     const speedRef = useRef(speedPerSecond);
 
-    let coords: {x: number; y: number}[] = [
-        {x: 50, y: 20}
-    ]
+    let coords: coords[] = []
     
-    for (let i = 0; i < 1000; i++) {
+    const min = -50;
+    const max = 50 ;
+    const windowWidth = window.innerWidth;
+    console.log(windowWidth);
+    console.log(window.innerWidth);
+    
+
+    for (let i = 0; i < 2000; i++) {
         let randomX: number = Math.floor(Math.random() * window.innerWidth)
         let randomY: number = Math.floor(Math.random() * window.innerHeight)
-        coords.push({x: randomX, y: randomY})
+        let randomVelocityX: number = Math.floor(Math.random() * (max - min + 1)) + min;
+        let randomVelocityY: number = Math.floor(Math.random() * (max - min + 1)) + min;
+        coords.push({x: randomX, y: randomY, velocityX: randomVelocityX, velocityY: randomVelocityY})
     }
 
     
@@ -68,24 +87,20 @@ export default function MagentaCanvas() {
             
             
             coords.forEach(coord => {
+                // Рисуем звезды
                 ctx.beginPath();
                 ctx.arc(coord.x, coord.y, 1, 0, Math.PI * 2);
                 ctx.fill();
-                // 3. Изменяем координату для следующего кадра
-                if(coord.x > window.innerWidth / 2) {
-                    coord.x += speedRef.current * deltaTime;  // Скорость движения (можно менять)
-                } 
-                if (coord.x < window.innerWidth / 2) {
-                    coord.x -= speedRef.current * deltaTime;  // Скорость движения (можно менять)
+                if (coord.y > windowWidth || coord.x > windowWidth || coord.y < -(window.innerWidth - window.innerHeight) || coord.x < 0) {
+                    coord.y = (window.innerHeight / 2)
+                    coord.x =  (window.innerWidth / 2)
                 }
-                if (coord.y > window.innerHeight ) {
-                    coord.y = Math.floor((Math.random() * window.innerHeight) - 500)
-                    coord.x = Math.floor(Math.random() * window.innerWidth)
-                }
-                coord.y += speedRef.current * deltaTime;  // Скорость движения (можно менять)
+                coord.y += speedRef.current * deltaTime * coord.velocityY;  // Скорость движения (можно менять)
+                coord.x -= speedRef.current * deltaTime * coord.velocityX;  // Скорость движения (можно менять)
+                
             });
 
-
+            
             
 
             // 4. Запрашиваем следующий кадр анимации
