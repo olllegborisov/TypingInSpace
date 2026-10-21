@@ -76,43 +76,45 @@ function App() {
 
   return (
     <main>
-      <h1>TypingInSpace</h1>
-      <p>Вы вошли как: {session.user.email}</p>
-      <button onClick={handleSignOut}>Выйти</button>
-      <TypingGame />
-      <MagentaCanvas />
-      <button
-        onClick={async () => {
-          try {
-            await saveAttempt({
-              duration_seconds: 60,
-              correct_count: 120,
-              error_count: 8,
-            });
+      <div className='wrapper'>
+        <h1>TypingInSpace</h1>
+        <p>Вы вошли как: {session.user.email}</p>
+        <button onClick={handleSignOut}>Выйти</button>
+        <TypingGame />
+        <MagentaCanvas />
+        <button
+          onClick={async () => {
+            try {
+              await saveAttempt({
+                duration_seconds: 60,
+                correct_count: 120,
+                error_count: 8,
+              });
 
-            const data = await getAttempts();
-            setAttempts(data);
-            setMessage('Результат сохранён');
-          } catch (error) {
-            setMessage(
-              error instanceof Error ? error.message : 'Произошла ошибка'
-            );
-          }
-        }}
-      >
-        Добавить тестовый результат
-      </button>
+              const data = await getAttempts();
+              setAttempts(data);
+              setMessage('Результат сохранён');
+            } catch (error) {
+              setMessage(
+                error instanceof Error ? error.message : 'Произошла ошибка'
+              );
+            }
+          }}
+        >
+          Добавить тестовый результат
+        </button>
 
-      <p>{message}</p>
+        <p>{message}</p>
 
-      <ul>
-        {attempts.map((attempt) => (
-          <li key={attempt.id}>
-            {new Date(attempt.played_at).toLocaleString()} — верно:
-            {' '}{attempt.correct_count}, ошибок: {attempt.error_count}
-          </li>
-        ))}
-      </ul>
+        <ul>
+          {attempts.map((attempt) => (
+            <li key={attempt.id}>
+              {new Date(attempt.played_at).toLocaleString()} — верно:
+              {' '}{attempt.correct_count}, ошибок: {attempt.error_count}
+            </li>
+          ))}
+        </ul>
+      </ div>
     </main>
   );
 }

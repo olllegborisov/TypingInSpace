@@ -1,7 +1,26 @@
 #root {
   /* background-color: #16171d; */
 }
+.wrapper {
+  margin: auto 0;
+}
 
+main {
+  margin: auto;
+}
+
+textarea {
+  background-color: transparent;
+  border: 1px solid white;
+  width: 400px;
+  height: 100px;
+  padding: 10px;
+}
+
+textarea::placeholder {
+  color: white;
+
+}
 
 
 :root {

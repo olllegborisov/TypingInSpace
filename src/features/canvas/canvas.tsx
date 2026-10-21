@@ -1,28 +1,37 @@
 import { useEffect, useRef, useState } from 'react';
 
 
-interface coords {
+interface Star {
     x: number;
     y: number;
     velocityX: number;
     velocityY: number;
-    radius: number;     // Разный размер для глубины
+    radius: number;
     sourceX: number;
     sourceY: number;
-    alpha: number;      // Плавное появление (эффект мерцания)
-    // active: boolean;    // Задержка появления
-    // spawnDelay: number; // Сколько кадров ждать до появления
+    alpha: number;
 }
+
+// Настройки по умолчанию
+const speedSet: number = 0.1;
+const qtySet: number = 300;
+const radiusSet: number = 1.5;
+const qtyStepSet: number = 10;
+const minQtySet: number = 100;
+const speedStepSet: number = 0.1;
+const colorSet: string = 'white';
+
 
 export default function MagentaCanvas() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    let [speedPerSecond, setSpeedPerSecond] = useState(0.5);
-    let [qtyStars, setQtyStart] = useState(500)
+    let [speedPerSecond, setSpeedPerSecond] = useState(speedSet);
+    let [qtyStars, setQtyStart] = useState(qtySet)
     const speedRef = useRef(speedPerSecond);
+    const starsRef = useRef<Star[]>([]);
 
-    let coords: coords[] = []
+    let Star: Star[] = []
     
-    const createStar = (): coords => {
+    const createStar = (): Star => {
         const x = Math.random() * window.innerWidth;
         const y = Math.random() * window.innerHeight;
 
@@ -31,32 +40,45 @@ export default function MagentaCanvas() {
             y,
             velocityX: x - window.innerWidth / 2,
             velocityY: y - window.innerHeight / 2,
-            radius: Math.random() * 1.5,
+            radius: Math.random() * radiusSet,
             sourceX: x,
             sourceY: y,
             alpha: 0,
         };
     };
     
-    for (let i = 0; i < qtyStars; i++) {
-        coords.push(createStar());
-    }
-
+    // Прибавляет и убавляет скорость и количество звёзд
     const handleClick = () => {
-        setSpeedPerSecond((prev) => prev + 0.5 )
-        setQtyStart((prev) => prev + 50)
+        setSpeedPerSecond((prev) => prev + speedStepSet)
+        setQtyStart((prev) => prev + qtyStepSet)
+        console.log(qtyStars);
         
     }   
     
     const handleClickReduce = () => {
-        setSpeedPerSecond((prev) => Math.max(0, prev -  0.5))
-        setQtyStart((prev) => prev > 50 ? prev -  50 : prev)
+        setSpeedPerSecond((prev) => Math.max(0, prev -  speedStepSet))
+        setQtyStart((prev) => prev > minQtySet ? prev - qtyStepSet : prev)
     }
+
 
 
     useEffect(() => {
         speedRef.current = speedPerSecond;
     }, [speedPerSecond]);
+
+
+    useEffect(() => {
+    const stars = starsRef.current;
+
+        while (stars.length < qtyStars) {
+            stars.push(createStar());
+        }
+
+        while (stars.length > qtyStars) {
+            stars.pop();
+        }
+    }, [qtyStars]);
+
 
     useEffect(() => {
         let animationFrameId: number;
@@ -80,10 +102,10 @@ export default function MagentaCanvas() {
             lastTimestamp = timestamp;
 
             
-            coords.forEach(coord => {
+            starsRef.current.forEach(coord => {
                 // Рисуем звезды
                 coord.alpha = Math.min(1, coord.alpha + deltaTime * 10);
-                ctx.fillStyle = 'white';
+                ctx.fillStyle = colorSet;
                 ctx.beginPath();
                 ctx.arc(coord.x, coord.y, coord.radius, 0, Math.PI * 2);
                 ctx.globalAlpha = coord.alpha;
@@ -147,4 +169,4 @@ export default function MagentaCanvas() {
             <button style={{zIndex: 10}} onClick={handleClickReduce}>Уменьшить скорость</button>
         </>
     );
-    }
+}
