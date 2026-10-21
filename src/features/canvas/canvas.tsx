@@ -22,24 +22,24 @@ export default function MagentaCanvas() {
 
     let coords: coords[] = []
     
+    const createStar = (): coords => {
+        const x = Math.random() * window.innerWidth;
+        const y = Math.random() * window.innerHeight;
+
+        return {
+            x,
+            y,
+            velocityX: x - window.innerWidth / 2,
+            velocityY: y - window.innerHeight / 2,
+            radius: Math.random() * 1.5,
+            sourceX: x,
+            sourceY: y,
+            alpha: 0,
+        };
+    };
+    
     for (let i = 0; i < qtyStars; i++) {
-        let randomX: number = Math.floor(Math.random() * window.innerWidth)
-        let randomY: number = Math.floor(Math.random() * window.innerHeight)
-        let sourceX: number = randomX;
-        let sourceY: number = randomY;
-        let randomVelocityX: number =  randomX - (window.innerWidth / 2);
-        let randomVelocityY: number = randomY -  (window.innerHeight / 2);
-        let alpha: number = 0;
-        coords.push({
-            x: randomX, 
-            y: randomY, 
-            velocityX: randomVelocityX, 
-            velocityY: randomVelocityY, 
-            radius: Math.random() * 1.5, 
-            sourceX: sourceX, 
-            sourceY: sourceY, 
-            alpha: alpha
-        })
+        coords.push(createStar());
     }
 
     const handleClick = () => {
