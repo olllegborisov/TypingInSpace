@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const TEXT = 'The quick brown fox jumps over the lazy dog.';
+const targetText: string = 'The quick brown fox jumps over the lazy dog.';
 
 export function TypingGame() {
     const [input, setInput] = useState('');
@@ -11,14 +11,12 @@ export function TypingGame() {
         let mathCount = 0;
         let mathError = 0;
         setInput(currentValue)
-        for (let i = 0; i < Math.min(currentValue.length, TEXT.length); i++) {
-            if (TEXT[i] == currentValue[i]) {
+        for (let i = 0; i < Math.min(currentValue.length, targetText.length); i++) {
+            if (targetText[i] == currentValue[i]) {
                 mathCount++
             } else {
                 mathError++
             }
-            console.log(Math.min(currentValue.length, TEXT.length));
-            
         }
         setCurrentCount(mathCount);
         setErrorCount(mathError)
@@ -30,7 +28,7 @@ export function TypingGame() {
     return (
         <section>
         <h2>Тренировка печати</h2>
-        <p>{TEXT}</p>
+        <p>{targetText}</p>
         <p>Правильных символов: {currentCount}</p>
         <p>Количество ошибок: {errorCount}</p>
         <textarea
