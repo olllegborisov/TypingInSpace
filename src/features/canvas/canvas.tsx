@@ -6,31 +6,29 @@ interface Star {
     y: number;
     velocityX: number;
     velocityY: number;
-    radius: number;
-    sourceX: number;
-    sourceY: number;
+    size: number;
     alpha: number;
 }
 
 // Настройки по умолчанию
-const speedSet: number = 0.1;
-const qtySet: number = 300;
-const radiusSet: number = 1.5;
-const qtyStepSet: number = 10;
-const minQtySet: number = 100;
-const speedStepSet: number = 0.1;
-const colorSet: string = 'white';
+const speed: number = 10;
+const speedStep: number = 0.5;
+const size: number = 1.5;
+const quantity: number = 300;
+const quantityStep: number = 10;
+const minQuantity: number = 100;
+const color: string = 'white';
+const hyperjumpBreakpoint:number = 10;
 
 
 export default function MagentaCanvas() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    let [speedPerSecond, setSpeedPerSecond] = useState(speedSet);
-    let [qtyStars, setQtyStart] = useState(qtySet)
+    const [speedPerSecond, setSpeedPerSecond] = useState(speed);
+    const [qtyStars, setQtyStars] = useState(quantity)
     const speedRef = useRef(speedPerSecond);
     const starsRef = useRef<Star[]>([]);
 
-    let Star: Star[] = []
-    
+
     const createStar = (): Star => {
         const x = Math.random() * window.innerWidth;
         const y = Math.random() * window.innerHeight;
@@ -40,24 +38,20 @@ export default function MagentaCanvas() {
             y,
             velocityX: x - window.innerWidth / 2,
             velocityY: y - window.innerHeight / 2,
-            radius: Math.random() * radiusSet,
-            sourceX: x,
-            sourceY: y,
+            size: Math.random() * size,
             alpha: 0,
         };
     };
     
     // Прибавляет и убавляет скорость и количество звёзд
     const handleClick = () => {
-        setSpeedPerSecond((prev) => prev + speedStepSet)
-        setQtyStart((prev) => prev + qtyStepSet)
-        console.log(qtyStars);
-        
+        setSpeedPerSecond((prev) => prev + speedStep)
+        setQtyStars((prev) => prev + quantityStep)
     }   
     
     const handleClickReduce = () => {
-        setSpeedPerSecond((prev) => Math.max(0, prev -  speedStepSet))
-        setQtyStart((prev) => prev > minQtySet ? prev - qtyStepSet : prev)
+        setSpeedPerSecond((prev) => Math.max(0, prev -  speedStep))
+        setQtyStars((prev) => prev > minQuantity ? prev - quantityStep : prev)
     }
 
 
@@ -88,11 +82,14 @@ export default function MagentaCanvas() {
         if (!canvas) return;
 
         const ctx = canvas.getContext('2d');
+        
         if (!ctx) return;
-
+        
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-
+        
+        ctx.fillStyle = color;
+        ctx.strokeStyle = color;
 
         const render = (timestamp: number) => {
             // Очищаем холст перед каждым новым кадром
@@ -104,12 +101,20 @@ export default function MagentaCanvas() {
             
             starsRef.current.forEach(coord => {
                 // Рисуем звезды
-                coord.alpha = Math.min(1, coord.alpha + deltaTime * 10);
-                ctx.fillStyle = colorSet;
-                ctx.beginPath();
-                ctx.arc(coord.x, coord.y, coord.radius, 0, Math.PI * 2);
-                ctx.globalAlpha = coord.alpha;
-                ctx.fill();
+                if(speedRef.current < hyperjumpBreakpoint) {
+                    coord.alpha = Math.min(1, coord.alpha + deltaTime * 10);
+                    ctx.globalAlpha = coord.alpha;
+                    ctx.beginPath();
+                    ctx.arc(coord.x, coord.y, coord.size, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    coord.alpha = Math.min(1, coord.alpha + deltaTime * 10);
+                    ctx.beginPath();
+                    ctx.moveTo(coord.x, coord.y);
+                    ctx.lineTo(coord.x + coord.velocityX * 0.5, coord.y + coord.velocityY * 0.5 );
+                    ctx.globalAlpha = coord.alpha;
+                    ctx.stroke();
+                }
 
                 // Задаём координаты появления новых звёзд
                 if (
@@ -120,13 +125,8 @@ export default function MagentaCanvas() {
                 ) {
                     coord.x = Math.random() * window.innerWidth;
                     coord.y = Math.random() * window.innerHeight;
-
-                    coord.sourceX = coord.x;
-                    coord.sourceY = coord.y;
-
                     coord.velocityX = coord.x - window.innerWidth / 2;
                     coord.velocityY = coord.y - window.innerHeight / 2;
-
                     coord.alpha = 0;
                 }
                 // Движение звёзд по координатам.
@@ -165,8 +165,8 @@ export default function MagentaCanvas() {
             >
             Your browser is not supported.
             </canvas>
-            <button style={{zIndex: 10}} onClick={() => handleClick()}>Увеличить скорость</button>
-            <button style={{zIndex: 10}} onClick={handleClickReduce}>Уменьшить скорость</button>
+            <button style={{position: 'relative', zIndex: 10}} onClick={() => handleClick()}>Увеличить скорость</button>
+            <button style={{position: 'relative', zIndex: 10}} onClick={handleClickReduce}>Уменьшить скорость</button>
         </>
     );
 }
