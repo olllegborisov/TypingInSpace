@@ -11,20 +11,20 @@ interface Star {
 }
 
 // Настройки по умолчанию
-const speed: number = 10;
-const speedStep: number = 0.5;
-const size: number = 1.5;
-const quantity: number = 300;
-const quantityStep: number = 10;
-const minQuantity: number = 100;
-const color: string = 'white';
-const hyperjumpBreakpoint:number = 10;
+const speed = 10;
+const speedStep = 0.5;
+const size = 1.5;
+const quantity = 300;
+const quantityStep = 10;
+const minQuantity = 100;
+const color = 'white';
 
 
 export default function MagentaCanvas() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [speedPerSecond, setSpeedPerSecond] = useState(speed);
     const [qtyStars, setQtyStars] = useState(quantity)
+    const hyperjumpRef = useRef(false);
     const speedRef = useRef(speedPerSecond);
     const starsRef = useRef<Star[]>([]);
 
@@ -98,16 +98,25 @@ export default function MagentaCanvas() {
             const deltaTime = (timestamp - lastTimestamp) / 1000;
             lastTimestamp = timestamp;
 
+            // if(timestamp > 5000) {
+            //     hyperjumpRef.current = true;
+            // }
+            // if(timestamp >  10000) {
+            //     hyperjumpRef.current = false;
+            // }
+
             
             starsRef.current.forEach(coord => {
                 // Рисуем звезды
-                if(speedRef.current < hyperjumpBreakpoint) {
+                if(!hyperjumpRef.current) {
+                    // Звёздное небо
                     coord.alpha = Math.min(1, coord.alpha + deltaTime * 10);
                     ctx.globalAlpha = coord.alpha;
                     ctx.beginPath();
                     ctx.arc(coord.x, coord.y, coord.size, 0, Math.PI * 2);
                     ctx.fill();
                 } else {
+                    // Гиперпрыжок
                     coord.alpha = Math.min(1, coord.alpha + deltaTime * 10);
                     ctx.beginPath();
                     ctx.moveTo(coord.x, coord.y);
@@ -129,18 +138,16 @@ export default function MagentaCanvas() {
                     coord.velocityY = coord.y - window.innerHeight / 2;
                     coord.alpha = 0;
                 }
+
                 // Движение звёзд по координатам.
                 coord.y += speedRef.current * deltaTime * coord.velocityY; 
                 coord.x += speedRef.current * deltaTime * coord.velocityX;
             });
             ctx.globalAlpha = 1;
 
-
-            // Запрашиваем следующий кадр анимации
             animationFrameId = requestAnimationFrame(render);
         };
 
-        // Запускаем анимацию
         animationFrameId = requestAnimationFrame(render);
 
 
