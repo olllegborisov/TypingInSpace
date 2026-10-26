@@ -38,7 +38,7 @@ function App() {
   }, []);
 
 
-  useEffect(() => {
+  useEffect(() => {The
     if (!session) {
       setAttempts([]);
       return;
@@ -77,7 +77,7 @@ function App() {
   return (
     <main>
       <div className='wrapper'>
-        <h1>TypingInSpace</h1>
+        <h1>Typing in space</h1>
         <p>Вы вошли как: {session.user.email}</p>
         <button onClick={handleSignOut}>Выйти</button>
         <TypingGame />
