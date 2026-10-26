@@ -24,9 +24,9 @@ const QUANTITY_STEP = 50;
 const COLOR = 'white';
 
 const TARGET_DECAY = 0.03;
-const SPEED_SMOOTHING = 0.01;
+const SPEED_SMOOTHING = 0.05;
 const HYPERJUMP_THRESHOLD = 20;
-const SPEED_MULTIPLIER = 3;
+const SPEED_MULTIPLIER = 0;
 const QUANTITY_MULTIPLIER = 500;
 
 export default function MagentaCanvas() {
@@ -49,9 +49,6 @@ export default function MagentaCanvas() {
     const gameStateRef = useRef<'regular' | 'hyperJump'>(gameState);
 
 
-
-
-
     const createStar = (): Star => {
         const x = Math.random() * window.innerWidth;
         const y = Math.random() * window.innerHeight;
@@ -64,7 +61,7 @@ export default function MagentaCanvas() {
         };
     };
 
-    // Обновление массива звёзд при изменении стейта
+    // Обновление массива звёзд при  изменении стейта
     useEffect(() => {
         const stars = starsRef.current;
         while (stars.length < qtyStars) stars.push(createStar());
