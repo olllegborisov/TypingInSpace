@@ -3,7 +3,7 @@ import { HiddenInput } from './HiddenInput';
 import styles from './TypingGamse.module.css'
 
 
-const targetText: string = 'The quick brown fox jumps over the lazy dog.';
+const targetText: string = 'The quick brown fox jumps over the lazy dog. The quick brown fox jumps ';
 
 export function TypingGame() {
     const [input, setInput] = useState('');
@@ -11,6 +11,24 @@ export function TypingGame() {
     const [errorCount, setErrorCount] = useState(0);
     const inputRef = useRef<HTMLInputElement>(null);
 
+
+    useEffect(() => {
+        const splittedInput = input.split(' ');
+        const splittedTarget = targetText.split(' ')
+        
+        let wordCounter = 0;
+
+        if (splittedInput.length > wordCounter + 2) {
+            console.log('true');
+            wordCounter++
+            
+        } else {
+            console.log('false');
+        }
+        console.log(splittedInput);
+        
+        
+    },[input])
     //     // Автофокус при клике в любом месте
     // useEffect(() => {
     //     const handleClick = () => inputRef.current?.focus();

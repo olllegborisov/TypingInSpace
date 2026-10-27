@@ -38,7 +38,7 @@ function App() {
   }, []);
 
 
-  useEffect(() => {The
+  useEffect(() => {
     if (!session) {
       setAttempts([]);
       return;
