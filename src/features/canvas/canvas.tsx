@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import styles from './canvas.module.css'
+import { TypingGame } from '../game/TypingGame';
 
 
 // Два состояния приложения космос в виде точек, и гиперпрыжок — полоски
@@ -164,9 +165,10 @@ export default function MagentaCanvas() {
     }, [speedPerSecond]);
 
     const handleClick = () => {
+        console.log('increase');
         setSpeedPerSecond((prev) => prev + SPEED_STEP);
         setQtyStars((prev) => prev + QUANTITY_STEP);
-    }   
+    }
     
     const handleClickReduce = () => {
         setSpeedPerSecond((prev) => Math.max(0.1, prev - SPEED_STEP));
@@ -211,6 +213,8 @@ export default function MagentaCanvas() {
                 className={styles.canvas}>
                 Your browser is not supported.
             </canvas>
+            <TypingGame onIncrease={handleClick}  onDecrease={handleClickReduce}/>
+
             
             <div className={styles.buttonWrapper}>
                 <button 

@@ -2,30 +2,75 @@ import { useState, useRef, useEffect } from 'react';
 import { HiddenInput } from './HiddenInput';
 import styles from './TypingGamse.module.css'
 
+interface MagentaCanvasProps {
+    onIncrease?: () => void;  // ? означает опционально
+    onDecrease?: () => void;
+}
 
 const targetText: string = 'The quick brown fox jumps over the lazy dog. The quick brown fox jumps ';
 
-export function TypingGame() {
+export function TypingGame({onIncrease, onDecrease}: MagentaCanvasProps) {
     const [input, setInput] = useState('');
+    const [targetArray, setTargetArray] = useState<string[]>([])
+    const [startWord, setStartWord] = useState(0)
+    
     const [currentCount, setCurrentCount] = useState(0);
     const [errorCount, setErrorCount] = useState(0);
+    const [ wordCounter , setWordCOunter] = useState(0)
     const inputRef = useRef<HTMLInputElement>(null);
 
 
     useEffect(() => {
         const splittedInput = input.split(' ');
-        const splittedTarget = targetText.split(' ')
-        
-        let wordCounter = 0;
+        const splittedTarget = targetText.split(' ');
 
-        if (splittedInput.length > wordCounter + 2) {
-            console.log('true');
-            wordCounter++
+        // splittedTarget.forEach((word, i) => {
+        //     setTargetArray((prev) => [...prev, input.slice(startWord, splittedTarget[i].length)]);
+        //     setStartWord((prev) => prev += i)
+        // })
+        for (let i = 0; i < splittedTarget.length; i++) {
             
-        } else {
-            console.log('false');
+            if(input.length === i) {
+                if(splittedTarget[startWord].length === i) {
+                    console.log(`Индекс цикла, целевого массива ${i} Длинная целевого массива: ${splittedTarget.length}`);
+                    setTargetArray((prev) => [...prev, input.slice(startWord, splittedTarget[startWord].length)]);
+                    setStartWord((prev) => prev += splittedTarget[startWord].length)
+                }
+            } else {
+                // console.log('Дальше не считать');
+                
+            }
+            console.log(`Индекс слова текущего: ${startWord}`);
+            
+
         }
-        console.log(splittedInput);
+        
+        
+
+  
+
+        
+
+        // for (let i = 0; i < splittedTarget.length; i++) {
+        //     setTargetArray((prev) => {
+        //         prev.push(input.slice(i, splittedTarget[i].length))
+        //     })
+        // }
+        
+
+        if (splittedInput.length > (wordCounter + 2)) {
+            setWordCOunter((prev) => prev += 2);
+            console.log(splittedInput[wordCounter] !== splittedTarget[wordCounter]);
+            if(splittedInput[wordCounter] === splittedTarget[wordCounter]) {
+                console.log('increase');
+                onIncrease?.()
+            } else {
+                console.log('onDecrease');
+                onDecrease?.()
+
+            }
+            
+        }
         
         
     },[input])

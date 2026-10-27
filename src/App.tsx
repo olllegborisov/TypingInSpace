@@ -4,7 +4,6 @@ import type { Session } from '@supabase/supabase-js';
 import { supabase } from './lib/supabase';
 import { AuthForm } from './features/auth/AuthForm';
 import { saveAttempt, getAttempts } from './features/statistics/attempts';
-import { TypingGame } from './features/game/TypingGame';
 import MagentaCanvas from './features/canvas/canvas';
 
 
@@ -80,7 +79,6 @@ function App() {
         <h1>Typing in space</h1>
         <p>Вы вошли как: {session.user.email}</p>
         <button onClick={handleSignOut}>Выйти</button>
-        <TypingGame />
         <MagentaCanvas />
         <button
           onClick={async () => {
